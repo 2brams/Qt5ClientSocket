@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QObject>
 #include <QTcpSocket>
-
+#include "dataview.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,18 +18,18 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    int communication(QString);
-    void chat();
-
+signals:
+    void sendConfSocket(QString, int);
 
 public slots:
     void test();
-    void connecter();
-    void deconnecter();
     void readyRead();
+    void view();
 
 private:
     Ui::MainWindow *ui;
     QTcpSocket *socket;
+    Dataview *dataview;
+    QTimer  *dataTimer;
 };
 #endif // MAINWINDOW_H

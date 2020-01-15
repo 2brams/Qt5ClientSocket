@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>478</width>
-    <height>302</height>
+    <width>372</width>
+    <height>209</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,89 +37,67 @@ QGroupBox::title {
       <property name="title">
        <string>System Connection</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <layout class="QFormLayout" name="formLayout">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_ip">
-             <property name="text">
-              <string>IP Adresse:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEdit_ip">
-             <property name="text">
-              <string>10.0.4.203</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_port">
-             <property name="text">
-              <string>Port TCP</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEdit_port">
-             <property name="text">
-              <string>8888</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_msg_client">
-             <property name="text">
-              <string>Msg du client:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="lineEdit_msg_client">
-             <property name="text">
-              <string>Bonjour!</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_msg_server">
-             <property name="text">
-              <string>Reponse du serveur: </string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="lineEdit_msg_server"/>
-           </item>
-          </layout>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="label_ip">
+           <property name="text">
+            <string>IP Adresse:</string>
+           </property>
+          </widget>
          </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QPushButton" name="pushButton_connec">
-             <property name="text">
-              <string>Connection</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_test">
-             <property name="text">
-              <string>Tester</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_quitter">
-             <property name="text">
-              <string>Quitter</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+         <item row="0" column="2" colspan="2">
+          <widget class="QLineEdit" name="lineEdit_ip">
+           <property name="text">
+            <string>10.0.4.203</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_port">
+           <property name="text">
+            <string>Port TCP:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2" colspan="2">
+          <widget class="QLineEdit" name="lineEdit_port">
+           <property name="text">
+            <string>8888</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="QLabel" name="label_msg_client">
+           <property name="text">
+            <string>Etat connexion:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="Led" name="led" native="true"/>
+         </item>
+         <item row="2" column="3">
+          <widget class="QPushButton" name="pushButton_test">
+           <property name="text">
+            <string>Tester</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="3">
+          <widget class="QPushButton" name="pushButton_quitter">
+           <property name="text">
+            <string>Quitter</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QPushButton" name="pushButton_connec">
+           <property name="text">
+            <string>Connection</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -133,13 +111,21 @@ QGroupBox::title {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>478</width>
+     <width>372</width>
      <height>20</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Led</class>
+   <extends>QWidget</extends>
+   <header>led.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

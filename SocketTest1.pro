@@ -1,6 +1,6 @@
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets network
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets network printsupport
 
 CONFIG += c++11
 
@@ -18,15 +18,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     dataview.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    qcustomplot.cpp
 
 HEADERS += \
     dataview.h \
-    mainwindow.h
+    mainwindow.h \
+    qcustomplot.h
 
 FORMS += \
     dataview.ui \
     mainwindow.ui
+
+
+LIBS += /home/ibrahim/AnalogWidgets/analogwidgets/libanalogwidgets.a
+
+INCLUDEPATH += /home/ibrahim/AnalogWidgets/analogwidgets/analogwidgets
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
