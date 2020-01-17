@@ -20,25 +20,31 @@ public:
 
 private slots:
     void recevSocket(QString, int);
-    void realtimeDataSlot();
     void readSensor();
-    void readFile();
-    void start();
-    void pause();
+    void readCpuTmp();
+    void readCpuFrq();
+    void startFrq();
+    void pauseFrq();
+    void startTmp();
+    void pauseTmp();
     void connecter();
     void deconnecter();
     void readyRead();
+    void alarm();
 
 private:
     Ui::Dataview *ui;
-    QTimer  *dataTimer;
     QTimer  *dataTimer2;
+    QTimer  *dataTimerFrq;
+    QTimer  *dataTimerTmp;
+    QTimer  *dataTimerAlarm;
     double m_tmp;
     double m_hum;
     QTcpSocket *socket;
     QString m_host;
     int m_port;
-    bool m_isgraph;
+    int m_choix;
+    bool m_ledEtat;
 
 };
 

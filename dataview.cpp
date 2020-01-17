@@ -17,20 +17,45 @@ Dataview::Dataview(QWidget *parent) :
     ui(new Ui::Dataview)
 {
     ui->setupUi(this);
-    dataTimer = new QTimer;
+
+    setFixedSize(1100,565);
+    dataTimerFrq = new QTimer;
+    dataTimerTmp = new QTimer;
     dataTimer2 = new QTimer;
+    dataTimerAlarm = new QTimer;
     m_tmp=0.0;
     m_hum=0.0;
+    m_ledEtat=false;
     socket = new QTcpSocket();
-    m_isgraph = false;
 
     initGraph();
-    connect( ui->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)),  ui->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-    connect( ui->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)),  ui->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+    ui->thermometre->setSuffix("°C");
+    ui->thermometre->setNominal(20);
+    ui->thermometre->setCritical(29);
+    //    ui->thermometre->set
+
+    ui->manometre->setSuffix(" bar");
+    ui->manometre->setMaximum(2000.0);
+    ui->manometre->setMinimum(500.0);
+    ui->manometre->setNominal(800.0);
+    ui->manometre->setCritical(1500.0);
+
+    ui->alarm->setColor("gray");
+    ui->led->setColor("white");
+
+    connect( ui->customPlot_frq->xAxis, SIGNAL(rangeChanged(QCPRange)),  ui->customPlot_frq->xAxis2, SLOT(setRange(QCPRange)));
+    connect( ui->customPlot_frq->yAxis, SIGNAL(rangeChanged(QCPRange)),  ui->customPlot_frq->yAxis2, SLOT(setRange(QCPRange)));
+
+    connect( ui->customPlot_tmp->xAxis, SIGNAL(rangeChanged(QCPRange)),  ui->customPlot_tmp->xAxis2, SLOT(setRange(QCPRange)));
+    connect( ui->customPlot_tmp->yAxis, SIGNAL(rangeChanged(QCPRange)),  ui->customPlot_tmp->yAxis2, SLOT(setRange(QCPRange)));
 
 
-    connect(ui->pushButton_start, SIGNAL(clicked()),this, SLOT(start()));
-    connect(ui->pushButton_pause, SIGNAL(clicked()),this, SLOT(pause()));
+    connect(ui->pushButton_start_frq, SIGNAL(clicked()),this, SLOT(startFrq()));
+    connect(ui->pushButton_pause_frq, SIGNAL(clicked()),this, SLOT(pauseFrq()));
+    connect(ui->pushButton_start_tmp, SIGNAL(clicked()),this, SLOT(startTmp()));
+    connect(ui->pushButton_pause_tmp, SIGNAL(clicked()),this, SLOT(pauseTmp()));
+
 
     connect(socket, SIGNAL(connected()), this, SLOT(connecter()));
     connect(socket, SIGNAL(disconnected()), this, SLOT(deconnecter()));
@@ -38,12 +63,17 @@ Dataview::Dataview(QWidget *parent) :
 
     connect(parent, SIGNAL(sendConfSocket(QString, int)), this, SLOT(recevSocket(QString, int)));
     connect(dataTimer2, SIGNAL(timeout()), this, SLOT(readSensor()));
-    dataTimer2->setInterval(2000);
+    dataTimer2->setInterval(3000);
 
 
-    connect(dataTimer, SIGNAL(timeout()), this, SLOT(readFile()));
-    dataTimer->setInterval(1000);
+    connect(dataTimerFrq, SIGNAL(timeout()), this, SLOT(readCpuFrq()));
+    dataTimerFrq->setInterval(2000);
 
+    connect(dataTimerTmp, SIGNAL(timeout()), this, SLOT(readCpuTmp()));
+    dataTimerTmp->setInterval(2000);
+
+    connect(dataTimerAlarm, SIGNAL(timeout()), this, SLOT(alarm()));
+    dataTimerAlarm->setInterval(500);
 
 }
 
@@ -54,52 +84,41 @@ Dataview::~Dataview()
 
 void Dataview::initGraph()
 {
-    ui->customPlot->setBackground(QBrush(QColor( 224, 224, 224)));
-    ui->customPlot->legend->setVisible(true);
+    ui->customPlot_frq->setBackground(QBrush(QColor( 224, 224, 224)));
+    ui->customPlot_frq->legend->setVisible(true);
 
-    ui->customPlot->addGraph();
+    ui->customPlot_frq->addGraph();
     QPen pen0;
     pen0.setWidth(2);
     pen0.setColor(QColor("green"));
-    ui->customPlot->graph(0)->setName("température");
-    ui->customPlot->graph(0)->setPen(pen0);
-
-    ui->customPlot->addGraph();
-    QPen pen1;
-    pen1.setStyle(Qt::DotLine);
-    pen1.setWidth(2);
-    pen1.setColor(QColor("blue"));
-    ui->customPlot->graph(1)->setName("humidité");
-    ui->customPlot->graph(1)->setPen(pen1);
-
+    ui->customPlot_frq->graph(0)->setName("Fréquence");
+    ui->customPlot_frq->graph(0)->setPen(pen0);
 
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
     timeTicker->setTimeFormat("%h:%m:%s");
-    ui->customPlot->xAxis->setTicker(timeTicker);
-    ui->customPlot->axisRect()->setupFullAxesBox();
-    ui->customPlot->yAxis->setRange(5, 50);
+    ui->customPlot_frq->xAxis->setTicker(timeTicker);
+    ui->customPlot_frq->axisRect()->setupFullAxesBox();
+    ui->customPlot_frq->yAxis->setRange(450, 700);
+
+
+    ui->customPlot_tmp->setBackground(QBrush(QColor( 224, 224, 224)));
+    ui->customPlot_tmp->legend->setVisible(true);
+
+    ui->customPlot_tmp->addGraph();
+    QPen pen1;
+    pen1.setWidth(2);
+    pen1.setColor(QColor("blue"));
+    ui->customPlot_tmp->graph(0)->setName("Température");
+    ui->customPlot_tmp->graph(0)->setPen(pen1);
+
+    QSharedPointer<QCPAxisTickerTime> timeTicker2(new QCPAxisTickerTime);
+    timeTicker->setTimeFormat("%h:%m:%s");
+    ui->customPlot_tmp->xAxis->setTicker(timeTicker2);
+    ui->customPlot_tmp->axisRect()->setupFullAxesBox();
+    ui->customPlot_tmp->yAxis->setRange(40, 70);
 
 }
 
-void Dataview::realtimeDataSlot()
-{
-
-    static QTime time(QTime::currentTime());
-    double key = time.elapsed()/1000.0;
-
-    static double lastPointKey = 0;
-    if (key - lastPointKey > 0.002)
-    {
-
-        ui->customPlot->graph(0)->addData(key, 15);
-        ui->customPlot->graph(1)->addData(key, 10);
-
-        lastPointKey = key;
-    }
-
-    ui->customPlot->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->customPlot->replot();
-}
 
 void Dataview::readSensor()
 {
@@ -110,37 +129,58 @@ void Dataview::readSensor()
 
     }
     socket->write("cpt");
-    m_isgraph=false;
+    m_choix=1;
 }
 
-void Dataview::readFile()
+
+void Dataview::readCpuTmp()
 {
     socket->connectToHost(m_host, m_port);
 
-    if(!socket->waitForConnected(1000)){
+    if(!socket->waitForConnected(5000)){
         QMessageBox::critical(this, "Erreur",socket->errorString());
 
     }
-    socket->write("tata");
-    m_isgraph=true;
+    socket->write("tmp");
+    m_choix=3;
 }
 
-void Dataview::start()
-{
-    dataTimer->start();
-}
-
-void Dataview::pause()
+void Dataview::readCpuFrq()
 {
     socket->connectToHost(m_host, m_port);
 
-    if(!socket->waitForConnected(1000)){
-        //        QMessageBox::critical(this, "Erreur",socket->errorString());
+    if(!socket->waitForConnected(5000)){
+        QMessageBox::critical(this, "Erreur",socket->errorString());
 
     }
-    socket->write("cpt");
-    dataTimer->stop();
+    socket->write("frq");
+    m_choix=2;
 }
+
+void Dataview::startFrq()
+{
+    dataTimerFrq->start();
+    ui->pushButton_start_tmp->setDisabled(true);
+}
+
+void Dataview::pauseFrq()
+{
+    dataTimerFrq->stop();
+    ui->pushButton_start_tmp->setDisabled(false);
+}
+
+void Dataview::startTmp()
+{
+    dataTimerTmp->start();
+    ui->pushButton_start_frq->setDisabled(true);
+}
+
+void Dataview::pauseTmp()
+{
+    dataTimerTmp->stop();
+    ui->pushButton_start_frq->setDisabled(false);
+}
+
 void Dataview::recevSocket(QString host, int port)
 {
     m_host= host;
@@ -164,15 +204,30 @@ void Dataview::readyRead()
     QByteArray responseBytes =  socket->readAll();
     socket->close();
 
-    qDebug() << responseBytes;
+    if(m_choix==2){
 
-    if(m_isgraph){
-        realtimeDataSlot();
-        qDebug() <<"graph" << responseBytes;
+        QString s(responseBytes);
+        bool ok = false;
+        double b = s.toDouble(&ok);
+
+        static QTime time(QTime::currentTime());
+        double key = time.elapsed()/1000.0;
+
+        static double lastPointKey = 0;
+        if (key - lastPointKey > 0.002 && b!=0.0)
+        {
+
+            ui->customPlot_frq->graph(0)->addData(key, b);
+            lastPointKey = key;
+        }
+
+        ui->customPlot_frq->xAxis->setRange(key, 8, Qt::AlignRight);
+        ui->customPlot_frq->replot();
+
+        qDebug() <<"Frq" <<responseBytes;
     }
-    else
+    else if(m_choix==1)
     {
-//        qDebug() <<"pas graph" << responseBytes;
 
         QString val= QString(responseBytes);
         QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
@@ -180,15 +235,54 @@ void Dataview::readyRead()
 
         QJsonValue tmp = sett2.value(QString("temperature"));
         QJsonValue hum = sett2.value(QString("humidity"));
+        QJsonValue pre = sett2.value(QString("pressure"));
 
-        qDebug()<< tmp;
-        qDebug()<< hum;
-        //            m_tmp= tmp.toDouble();
-        //            ui->label_tmp->setText(QString::number(tmp.toDouble(),'g',3));
-        //            m_hum = hum.toDouble();
-        //            ui->label_hum->setText(QString::number(hum.toDouble(),'g',3));
+        qDebug()<< tmp.toDouble();
+        qDebug()<< hum.toDouble();
+        qDebug()<< pre.toDouble();
 
+        ui->thermometre->setValue((int)tmp.toDouble());
+        ui->humidite->setValue(hum.toDouble());
+        ui->manometre->setValue(pre.toDouble());
+
+        if((int)tmp.toDouble()>=29 ){
+            dataTimerAlarm->start();
+        }else{
+            dataTimerAlarm->stop();
+            ui->alarm->setColor("gray");
+        }
+
+
+    } else if(m_choix==3){
+        QString s(responseBytes);
+        bool ok = false;
+        double b1 = s.toDouble(&ok);
+
+        static QTime time2(QTime::currentTime());
+        double key2 = time2.elapsed()/1000.0;
+
+        static double lastPointKey = 0;
+        if (key2 - lastPointKey > 0.002 && b1!=0.0)
+        {
+
+            ui->customPlot_tmp->graph(0)->addData(key2, b1);
+            lastPointKey = key2;
+        }
+
+        ui->customPlot_tmp->xAxis->setRange(key2, 8, Qt::AlignRight);
+        ui->customPlot_tmp->replot();
+
+        qDebug() <<"Tmp" <<responseBytes;
     }
 
+}
+
+void Dataview::alarm()
+{
+    m_ledEtat = !m_ledEtat;
+    if(m_ledEtat)
+        ui->alarm->setColor("red");
+    else
+        ui->alarm->setColor("gray");
 }
 

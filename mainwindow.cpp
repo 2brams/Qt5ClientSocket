@@ -45,6 +45,7 @@ void MainWindow::test()
     {
         socket->write("Bnjour");
         ui->pushButton_connec->setEnabled(true);
+        ui->led->setColor("green");
 
     }
 
