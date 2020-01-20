@@ -25,6 +25,7 @@ public slots:
     void test();
     void readyRead();
     void view();
+    void deconnexion();
 
 private:
     Ui::MainWindow *ui;

@@ -23,27 +23,38 @@ private slots:
     void readSensor();
     void readCpuTmp();
     void readCpuFrq();
+
     void startFrq();
     void pauseFrq();
     void startTmp();
     void pauseTmp();
+    void ledOn();
+    void ledOff();
+
     void connecter();
     void deconnecter();
-    void readyRead();
+
+    void readyReadFrq();
+    void readyReadBme();
+    void readyReadTmp();
+    void readyReadLed();
     void alarm();
 
 private:
     Ui::Dataview *ui;
-    QTimer  *dataTimer2;
+    QTimer  *dataTimerBme;
     QTimer  *dataTimerFrq;
     QTimer  *dataTimerTmp;
     QTimer  *dataTimerAlarm;
     double m_tmp;
     double m_hum;
-    QTcpSocket *socket;
+    QTcpSocket *socketFrq;
+    QTcpSocket *socketBme;
+    QTcpSocket *socketTmp;
+    QTcpSocket *socketLed;
+
     QString m_host;
     int m_port;
-    int m_choix;
     bool m_ledEtat;
 
 };

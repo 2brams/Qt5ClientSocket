@@ -96,10 +96,17 @@ QGroupBox::title {
            </property>
           </widget>
          </item>
-         <item row="3" column="2">
+         <item row="3" column="1">
           <widget class="QPushButton" name="pushButton_connec">
            <property name="text">
             <string>Connexion</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QPushButton" name="pushButton_deconnexion">
+           <property name="text">
+            <string>Déconnexion</string>
            </property>
           </widget>
          </item>

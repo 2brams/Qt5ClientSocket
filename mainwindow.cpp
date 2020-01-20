@@ -14,13 +14,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     dataview = new Dataview(this);
 
-    setFixedSize(330,200);
+    setFixedSize(380,200);
     ui->pushButton_connec->setEnabled(false);
+    ui->pushButton_deconnexion->setEnabled(false);
 
 
     connect(ui->pushButton_test, SIGNAL(clicked()), this, SLOT(test()));
     connect(ui->pushButton_quitter, SIGNAL(clicked()),this, SLOT(close()));
     connect(ui->pushButton_connec, SIGNAL(clicked()),this, SLOT(view()));
+    connect(ui->pushButton_deconnexion, SIGNAL(clicked()),this, SLOT(deconnexion()));
     connect(socket, SIGNAL(readyRead()),this, SLOT(readyRead()));
 
 
@@ -45,7 +47,11 @@ void MainWindow::test()
     {
         socket->write("Bnjour");
         ui->pushButton_connec->setEnabled(true);
+        ui->pushButton_deconnexion->setEnabled(true);
+
         ui->led->setColor("green");
+        ui->lineEdit_ip->setEnabled(false);
+        ui->lineEdit_port->setEnabled(false);
 
     }
 
@@ -65,6 +71,16 @@ void MainWindow::view()
     hide();
     dataview->exec();
     show();
+
+}
+
+void MainWindow::deconnexion()
+{
+    ui->led->setColor("red");
+    ui->lineEdit_ip->setEnabled(true);
+    ui->lineEdit_port->setEnabled(true);
+    ui->pushButton_connec->setEnabled(false);
+    ui->pushButton_deconnexion->setEnabled(false);
 
 }
 
