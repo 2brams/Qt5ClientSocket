@@ -76,11 +76,11 @@ INCLUDEPATH += /path/AnalogWidgets/analogwidgets/analogwidgets
 
 ## Screenshots <a name = "screenshots"></a>
 
-<p align="center">
-![connexion](https://imgur.com/CvILBXz.png)
-</p>
 
-<p align="center">
+![connexion](https://imgur.com/CvILBXz.png)
+
+
+
 ![visualisation_data](https://imgur.com/qf19R4S.png)
-</p>
+
 
