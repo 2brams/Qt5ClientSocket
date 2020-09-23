@@ -33,9 +33,9 @@ FORMS += \
     mainwindow.ui
 
 
-LIBS += /home/ibrahim/AnalogWidgets/analogwidgets/libanalogwidgets.a
+LIBS += /home/ibrahim/qt/AnalogWidgets/analogwidgets/libanalogwidgets.a
 
-INCLUDEPATH += /home/ibrahim/AnalogWidgets/analogwidgets/analogwidgets
+INCLUDEPATH += /home/ibrahim/qt/AnalogWidgets/analogwidgets/analogwidgets
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
