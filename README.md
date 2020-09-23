@@ -32,7 +32,7 @@
  Nous avons utilisé une carte **Raspberry Pi** et un capteur **bme280** pour lire les données	d’environnement (la température, l'humidité et la pression) et des données de la carte (température et fréquence du cpu). 
 
  Ce dépôt présente uniquement l'application de visualisation développée en **Qt5**, elle utilise les **sockets** pour la communication entre l’ordinateur et la Raspberry.
- Vous pouvez trouver [ici](https://github.com/2brams/AjcSmileProjet1/README.md#section)  une autre version avec le protocole **MQTT**. 
+ Vous pouvez trouver [ici](https://github.com/2brams/Qt5ClientMQTT)  une autre version avec le protocole **MQTT**. 
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
