@@ -3,8 +3,8 @@
  <img width=200px height=200px src="https://i.imgur.com/6wj0hh6.jpg" alt="Project logo"></a>
 </p>
 
-<h3 align="center">Data Logger</h3>
-<h5 align="center">Qt5 Client Sockets</h5>
+<h3 align="center">Qt5-Client-Sockets</h3>
+
 
 <div align="center">
 
@@ -76,6 +76,11 @@ INCLUDEPATH += /path/AnalogWidgets/analogwidgets/analogwidgets
 
 ## Screenshots <a name = "screenshots"></a>
 
+<p align="center">
 ![connexion](https://imgur.com/CvILBXz.png)
+</p>
 
+<p align="center">
 ![visualisation_data](https://imgur.com/qf19R4S.png)
+</p>
+
